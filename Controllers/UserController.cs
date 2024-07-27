@@ -1,4 +1,6 @@
-﻿using Expense.Manager.Application.IServices;
+﻿using AutoMapper;
+using Expense.Manager.API.Dtos;
+using Expense.Manager.Application.IServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Expense.Manager.API.Controllers;
@@ -6,9 +8,11 @@ namespace Expense.Manager.API.Controllers;
 public class UserController : ExpenseBaseController
 {
     private readonly IUserService userService;
-    public UserController(IUserService userService)
+    private readonly IMapper mapper;
+    public UserController(IUserService userService, IMapper mapper)
     {
         this.userService = userService;
+        this.mapper = mapper;
     }
   
     [HttpGet]
@@ -16,6 +20,7 @@ public class UserController : ExpenseBaseController
     public async Task<IActionResult> GetAllUsers()
     {
         var users = await userService.GetAllUsers();
-        return Ok(users);
+        var userDtos = mapper.Map<IReadOnlyList<UserDto>>(users);
+        return Ok(userDtos);
     }
 }
